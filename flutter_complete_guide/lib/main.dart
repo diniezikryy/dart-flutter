@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/result.dart';
 import './question.dart';
 import './answer.dart';
-import 'quiz.dart';
+import './quiz.dart';
+import './result.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,35 +21,45 @@ class _MyAppState extends State<MyApp> {
     {
       "questionText": "What is your favourite color?",
       "answers": [
-        "Black",
-        "Red",
-        "Green",
-        "White",
+        {"text": "Black", "score": 10},
+        {"text": "Red", "score": 5},
+        {"text": "Green", "score": 3},
+        {"text": "White", "score": 1},
       ]
     },
     {
       "questionText": "What is your favourite animal?",
       "answers": [
-        "Elephant",
-        "Tiger",
-        "Ant",
-        "Giraffe",
+        {"text": "Elephant", "score": 10},
+        {"text": "Giraffe", "score": 5},
+        {"text": "Cat", "score": 3},
+        {"text": "Pig", "score": 1},
       ]
     },
     {
       "questionText": "What is your favourite instructor?",
       "answers": [
-        "Max",
-        "Max",
-        "Max",
-        "Max",
+        {"text": "Max", "score": 1},
+        {"text": "Max", "score": 1},
+        {"text": "Max", "score": 1},
+        {"text": "Max", "score": 1},
       ]
     }
   ];
 
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void _answerQuestion(int score) {
+    _totalScore += score;
+
     if (_questionIndex < _questions.length) {
       print("We have more questions!");
     }
@@ -64,8 +76,12 @@ class _MyAppState extends State<MyApp> {
         title: Text("Hello World!"),
       ),
       body: _questionIndex < _questions.length
-          ? Quiz(_answerQuestion, _questions, _questionIndex)
-          : Center(child: Text("You did it!")),
+          ? Quiz(
+              answerQuestion: _answerQuestion,
+              questions: _questions,
+              questionIndex: _questionIndex,
+            )
+          : Result(_totalScore, _resetQuiz),
     ));
   }
 }
