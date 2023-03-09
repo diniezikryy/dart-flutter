@@ -72,7 +72,7 @@ class OrderButton extends StatefulWidget {
   final Cart cart;
 
   @override
-  State<OrderButton> createState() => _OrderButtonState();
+  _OrderButtonState createState() => _OrderButtonState();
 }
 
 class _OrderButtonState extends State<OrderButton> {
@@ -98,9 +98,8 @@ class _OrderButtonState extends State<OrderButton> {
               widget.cart.clear();
             },
       style: ButtonStyle(
-        foregroundColor:
-            MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-      ),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(Theme.of(context).primaryColor)),
     );
   }
 }
