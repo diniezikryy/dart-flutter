@@ -13,6 +13,7 @@ import './screens/orders_screen.dart';
 import './screens/user_products_screen.dart';
 import './screens/edit_product_screen.dart';
 import './screens/auth_screen.dart';
+import './screens/splash_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,14 +28,18 @@ class MyApp extends StatelessWidget {
             value: Auth(),
           ),
           ChangeNotifierProxyProvider<Auth, Products>(
-            update: (ctx, auth, previousProducts) => Products(auth.token,
-                previousProducts == null ? [] : previousProducts.items),
+            update: (ctx, auth, previousProducts) => Products(
+                auth.token,
+                previousProducts == null ? [] : previousProducts.items,
+                auth.userId),
           ),
           ChangeNotifierProvider.value(
             value: Cart(),
           ),
           ChangeNotifierProxyProvider<Auth, Orders>(
-              update: (ctx, auth, previousOrders) => Orders(auth.token,
+              update: (ctx, auth, previousOrders) => Orders(
+                  auth.token,
+                  auth.userId,
                   previousOrders == null ? [] : previousOrders.orders)),
         ],
         child: Consumer<Auth>(
@@ -45,7 +50,15 @@ class MyApp extends StatelessWidget {
                 accentColor: Colors.deepOrange,
                 fontFamily: 'Lato',
               ),
-              home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+              home: auth.isAuth
+                  ? ProductsOverviewScreen()
+                  : FutureBuilder(
+                      future: auth.tryAutoLogin(),
+                      builder: (ctx, authResultSnapshot) =>
+                          authResultSnapshot.connectionState ==
+                                  ConnectionState.waiting
+                              ? SplashScreen()
+                              : AuthScreen()),
               routes: {
                 ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
                 CartScreen.routeName: (ctx) => CartScreen(),
